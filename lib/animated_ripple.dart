@@ -3,7 +3,14 @@ library animated_ripple;
 import 'package:flutter/material.dart';
 
 class AnimatedRipple extends StatefulWidget {
-  const AnimatedRipple({Key? key}) : super(key: key);
+  const AnimatedRipple({
+    Key? key,
+    required this.size,
+    required this.numberOfRipples,
+  }) : super(key: key);
+
+  final int numberOfRipples;
+  final Size size;
 
   @override
   State<AnimatedRipple> createState() => _AnimatedRippleState();
@@ -26,12 +33,20 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(300, 300),
-      painter: _RipplePainter(
-        size: const Size.fromRadius(150),
-        color: Colors.red,
-      ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        for (var i = 0; i < widget.numberOfRipples; i++)
+          CustomPaint(
+            size: widget.size / widget.numberOfRipples.toDouble() * i.toDouble(),
+            painter: _RipplePainter(
+              opacity: 0.1,
+              size: widget.size / widget.numberOfRipples.toDouble() * i.toDouble(),
+
+              color: Colors.red,
+            ),
+          ),
+      ],
     );
   }
 }
@@ -39,10 +54,12 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
 class _RipplePainter extends CustomPainter {
   final Size size;
   final Color color;
+  final double opacity;
 
   _RipplePainter({
     required this.size,
-    this.color = Colors.transparent,
+    required this.opacity,
+    required this.color,
   });
 
   @override
@@ -50,7 +67,7 @@ class _RipplePainter extends CustomPainter {
     Paint paint = Paint();
     Path path = Path();
 
-    paint.color = color;
+    paint.color = color.withOpacity(opacity);
     path = Path();
     path.lineTo(size.width * 0.83, size.height / 5);
     path.cubicTo(size.width * 0.75, size.height * 0.1, size.width * 0.64, size.height * 0.01, size.width * 0.51, 0);

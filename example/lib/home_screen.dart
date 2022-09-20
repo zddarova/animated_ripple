@@ -30,7 +30,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         title: const Text('AnimatedRippleExampleApp'),
       ),
       body: const Center(
-        child: AnimatedRipple(),
+        child: AnimatedRipple(
+          size: Size.fromRadius(150),
+          numberOfRipples: 5,
+        ),
       ),
     );
   }
