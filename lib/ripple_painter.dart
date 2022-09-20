@@ -38,8 +38,6 @@ class _RipplePainter extends CustomPainter {
     path.cubicTo(w * 0.93, h * 0.34, w * 0.88, h * 0.27, w * 0.83, h / 5);
     path.cubicTo(w * 0.83, h / 5, w * 0.83, h / 5, w * 0.83, h / 5);
 
-    if (fill) path = path.shift(-Offset(h / 2, w / 2));
-
     canvas.drawPath(path, paint);
   }
 
