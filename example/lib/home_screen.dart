@@ -27,14 +27,20 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AnimatedRippleExampleApp'),
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Animated Ripple Example App',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
+      // todo (andreyK): add Inherited widget to set this props
       body: const Center(
         child: AnimatedRipple(
-          size: Size.fromRadius(150),
-          numberOfRipples: 5,
-          duration: Duration(seconds: 1),
+          size: Size.fromRadius(300),
+          numberOfRipples: 10,
+          duration: Duration(seconds: 2),
           color: Colors.black,
+          loopAnimation: true,
         ),
       ),
     );

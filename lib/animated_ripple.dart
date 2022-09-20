@@ -14,6 +14,7 @@ class AnimatedRipple extends StatefulWidget {
     required this.duration,
     required this.color,
     this.onPressed,
+    required this.loopAnimation,
   }) : super(key: key);
 
   final int numberOfRipples;
@@ -21,6 +22,7 @@ class AnimatedRipple extends StatefulWidget {
   final Duration duration;
   final Color color;
   final VoidCallback? onPressed;
+  final bool loopAnimation;
 
   @override
   State<AnimatedRipple> createState() => _AnimatedRippleState();
@@ -35,7 +37,8 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
-    )..repeat();
+    );
+    if (widget.loopAnimation) _controller.repeat();
   }
 
   @override
@@ -63,21 +66,24 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
 
           final result = Size(h, w);
 
-          final opacity = 1 - (nextCoefficient - iCoefficient) * _controller.value;
+          // TODO (andreyK): fix issue with opacity assert
+          var opacity = 1 - nextCoefficient - (nextCoefficient - iCoefficient) * _controller.value;
+          if (opacity < 0) opacity = 0;
+          if (opacity > 1) opacity = 1;
 
-          if (false) {
-            print('''\n\n
-iCoefficient:\t\t\t$iCoefficient
-nextCoefficient:\t\t$nextCoefficient
-iSize:\t\t\t\t\t$iSize
-nextSize:\t\t\t\t$nextSize
-h:\t\t\t\t\t\t$h
-w:\t\t\t\t\t\t$w
-_controller.value:\t\t${_controller.value}
-result:\t\t\t\t\t$result
-opacity:\t\t\t\t\t$opacity
-\n\n''');
-          }
+//           if (false) {
+//             print('''\n\n
+// iCoefficient:\t\t\t$iCoefficient
+// nextCoefficient:\t\t$nextCoefficient
+// iSize:\t\t\t\t\t$iSize
+// nextSize:\t\t\t\t$nextSize
+// h:\t\t\t\t\t\t$h
+// w:\t\t\t\t\t\t$w
+// _controller.value:\t\t${_controller.value}
+// result:\t\t\t\t\t$result
+// opacity:\t\t\t\t\t$opacity
+// \n\n''');
+//           }
 
           paints.add(
             CustomPaint(
@@ -93,14 +99,16 @@ opacity:\t\t\t\t\t$opacity
 
         return Stack(
           alignment: Alignment.center,
-
           children: [
+            ...paints,
             _RippleButton(
-              onPressed: widget.onPressed,
+              onPressed: () {
+                if (!widget.loopAnimation) _controller.forward().then((_) => _controller.reset());
+                widget.onPressed?.call();
+              },
               color: widget.color,
               size: widget.size / widget.numberOfRipples.toDouble(),
             ),
-            ...paints,
           ],
         );
       },

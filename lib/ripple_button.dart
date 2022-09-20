@@ -8,17 +8,22 @@ class _RippleButton extends StatelessWidget {
     Key? key,
     required this.size,
     required this.color,
-    this.onPressed,
+    required this.onPressed,
   }) : super(key: key);
 
-  final VoidCallback? onPressed;
+  final VoidCallback onPressed;
   final Size size;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
+
       onTap: onPressed,
+      splashColor: Colors.white,
+      highlightColor: Colors.white,
+      focusColor: Colors.white,
+      hoverColor: Colors.white,
       child: CustomPaint(
         size: size,
         painter: _RipplePainter(
