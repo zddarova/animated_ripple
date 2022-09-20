@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 part 'ripple_painter.dart';
 
 part 'ripple_button.dart';
-
+// todo(andreyK): add button bounce option on tap
 class AnimatedRipple extends StatefulWidget {
   const AnimatedRipple({
     Key? key,
