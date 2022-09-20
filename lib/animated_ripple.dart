@@ -2,15 +2,25 @@ library animated_ripple;
 
 import 'package:flutter/material.dart';
 
+part 'ripple_painter.dart';
+
+part 'ripple_button.dart';
+
 class AnimatedRipple extends StatefulWidget {
   const AnimatedRipple({
     Key? key,
     required this.size,
     required this.numberOfRipples,
+    required this.duration,
+    required this.color,
+    this.onPressed,
   }) : super(key: key);
 
   final int numberOfRipples;
   final Size size;
+  final Duration duration;
+  final Color color;
+  final VoidCallback? onPressed;
 
   @override
   State<AnimatedRipple> createState() => _AnimatedRippleState();
@@ -22,7 +32,10 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    )..repeat();
   }
 
   @override
@@ -33,68 +46,64 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        for (var i = 0; i < widget.numberOfRipples; i++)
-          CustomPaint(
-            size: widget.size / widget.numberOfRipples.toDouble() * i.toDouble(),
-            painter: _RipplePainter(
-              opacity: 0.1,
-              size: widget.size / widget.numberOfRipples.toDouble() * i.toDouble(),
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (_, __) {
+        final paints = <CustomPaint>[];
 
-              color: Colors.red,
+        for (var i = 1; i < widget.numberOfRipples + 1; i++) {
+          final iCoefficient = i.toDouble() / widget.numberOfRipples.toDouble();
+          final nextCoefficient = (i + 1).toDouble() / widget.numberOfRipples.toDouble();
+
+          final iSize = widget.size * iCoefficient;
+          final nextSize = widget.size * nextCoefficient;
+
+          final h = iSize.height + (nextSize.height - iSize.height) * _controller.value;
+          final w = iSize.width + (nextSize.width - iSize.width) * _controller.value;
+
+          final result = Size(h, w);
+
+          final opacity = 1 - (nextCoefficient - iCoefficient) * _controller.value;
+
+          if (false) {
+            print('''\n\n
+iCoefficient:\t\t\t$iCoefficient
+nextCoefficient:\t\t$nextCoefficient
+iSize:\t\t\t\t\t$iSize
+nextSize:\t\t\t\t$nextSize
+h:\t\t\t\t\t\t$h
+w:\t\t\t\t\t\t$w
+_controller.value:\t\t${_controller.value}
+result:\t\t\t\t\t$result
+opacity:\t\t\t\t\t$opacity
+\n\n''');
+          }
+
+          paints.add(
+            CustomPaint(
+              size: result,
+              painter: _RipplePainter(
+                size: result,
+                opacity: opacity,
+                color: widget.color,
+              ),
             ),
-          ),
-      ],
+          );
+        }
+
+        return Stack(
+          alignment: Alignment.center,
+
+          children: [
+            _RippleButton(
+              onPressed: widget.onPressed,
+              color: widget.color,
+              size: widget.size / widget.numberOfRipples.toDouble(),
+            ),
+            ...paints,
+          ],
+        );
+      },
     );
   }
-}
-
-class _RipplePainter extends CustomPainter {
-  final Size size;
-  final Color color;
-  final double opacity;
-
-  _RipplePainter({
-    required this.size,
-    required this.opacity,
-    required this.color,
-  });
-
-  @override
-  void paint(Canvas canvas, _) {
-    Paint paint = Paint();
-    Path path = Path();
-
-    paint.color = color.withOpacity(opacity);
-    path = Path();
-    path.lineTo(size.width * 0.83, size.height / 5);
-    path.cubicTo(size.width * 0.75, size.height * 0.1, size.width * 0.64, size.height * 0.01, size.width * 0.51, 0);
-    path.cubicTo(size.width * 0.38, 0, size.width * 0.26, size.height * 0.08, size.width * 0.17, size.height * 0.19);
-    path.cubicTo(size.width * 0.12, size.height * 0.26, size.width * 0.07, size.height / 3, size.width * 0.04,
-        size.height * 0.4);
-    path.cubicTo(
-        size.width * 0.01, size.height * 0.48, -0.01, size.height * 0.56, size.width * 0.01, size.height * 0.64);
-    path.cubicTo(size.width * 0.03, size.height * 0.73, size.width * 0.07, size.height * 0.79, size.width * 0.13,
-        size.height * 0.84);
-    path.cubicTo(size.width * 0.19, size.height * 0.89, size.width * 0.26, size.height * 0.92, size.width / 3,
-        size.height * 0.95);
-    path.cubicTo(
-        size.width * 0.45, size.height, size.width * 0.58, size.height * 1.02, size.width * 0.7, size.height * 0.97);
-    path.cubicTo(size.width * 0.77, size.height * 0.93, size.width * 0.83, size.height * 0.89, size.width * 0.89,
-        size.height * 0.84);
-    path.cubicTo(
-        size.width * 0.94, size.height * 0.79, size.width * 0.98, size.height * 0.72, size.width, size.height * 0.64);
-    path.cubicTo(size.width, size.height * 0.56, size.width, size.height * 0.48, size.width * 0.96, size.height * 0.41);
-    path.cubicTo(size.width * 0.93, size.height * 0.34, size.width * 0.88, size.height * 0.27, size.width * 0.83,
-        size.height / 5);
-    path.cubicTo(
-        size.width * 0.83, size.height / 5, size.width * 0.83, size.height / 5, size.width * 0.83, size.height / 5);
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

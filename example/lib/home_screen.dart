@@ -33,6 +33,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         child: AnimatedRipple(
           size: Size.fromRadius(150),
           numberOfRipples: 5,
+          duration: Duration(seconds: 1),
+          color: Colors.black,
         ),
       ),
     );
