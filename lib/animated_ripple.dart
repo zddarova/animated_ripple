@@ -14,6 +14,7 @@ class AnimatedRipple extends StatefulWidget {
     required this.duration,
     required this.color,
     this.onPressed,
+    // todo (andreyK): replace with enum
     required this.loopAnimation,
   }) : super(key: key);
 
