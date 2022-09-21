@@ -30,6 +30,12 @@ class _RippleButtonState extends State<_RippleButton> with SingleTickerProviderS
 
   static const _opacity = 1.0;
   static const _fill = true;
+  static const callbackFirst = true;
+
+  Future<void> _sizeUpAndDown() async {
+    await _controller.forward();
+    await _controller.reverse();
+  }
 
   @override
   void initState() {
@@ -46,9 +52,13 @@ class _RippleButtonState extends State<_RippleButton> with SingleTickerProviderS
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        await _controller.forward();
-        await _controller.reverse();
-        widget.onPressed();
+        if (callbackFirst) {
+          widget.onPressed();
+          await _sizeUpAndDown();
+        } else {
+          await _sizeUpAndDown();
+          widget.onPressed();
+        }
       },
       splashColor: widget.secondaryColor,
       highlightColor: widget.secondaryColor,
