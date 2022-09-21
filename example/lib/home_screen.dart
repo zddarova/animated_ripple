@@ -35,12 +35,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ),
       // todo (andreyK): add Inherited widget to set this props
       body: const Center(
+        // todo (andreyK): figure out what is happening with sized and opacities
         child: AnimatedRipple(
           size: Size.fromRadius(300),
-          numberOfRipples: 10,
-          duration: Duration(seconds: 2),
+          numberOfRipples: 7,
+          duration: Duration(seconds: 1),
           color: Colors.black,
-          rippleEffect: RippleEffect.looped,
+          rippleEffect: RippleEffect.speedUpOnTap,
         ),
       ),
     );
