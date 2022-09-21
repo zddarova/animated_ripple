@@ -1,4 +1,5 @@
 import 'package:example/home_screen.dart';
+import 'package:example/theme_widget.dart';
 import 'package:flutter/material.dart';
 
 class AnimatedRippleExampleApp extends StatelessWidget {
@@ -6,12 +7,11 @@ class AnimatedRippleExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ThemeWidget(
+      child: const MaterialApp(
+        title: 'Flutter Demo',
+        home: HomeScreen(),
       ),
-      home: const HomeScreen(),
     );
   }
 }

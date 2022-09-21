@@ -7,7 +7,6 @@ part 'ripple_painter.dart';
 
 enum RippleEffect { looped, animateOnTap, speedUpOnTap }
 
-// todo(andreyK): add button bounce option on tap
 class AnimatedRipple extends StatefulWidget {
   const AnimatedRipple({
     Key? key,
@@ -15,6 +14,7 @@ class AnimatedRipple extends StatefulWidget {
     required this.numberOfRipples,
     required this.duration,
     required this.color,
+    required this.secondaryColor,
     required this.rippleEffect,
     this.onPressed,
   }) : super(key: key);
@@ -23,6 +23,7 @@ class AnimatedRipple extends StatefulWidget {
   final Size size;
   final Duration duration;
   final Color color;
+  final Color secondaryColor;
   final VoidCallback? onPressed;
   final RippleEffect rippleEffect;
 
@@ -120,6 +121,7 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
                 }
               },
               color: widget.color,
+              secondaryColor: widget.secondaryColor,
               size: widget.size / widget.numberOfRipples.toDouble(),
             ),
           ],

@@ -1,5 +1,6 @@
 import 'package:animated_ripple/animated_ripple.dart';
 import 'package:example/settings_screen.dart';
+import 'package:example/theme_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -29,41 +30,47 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
+        backgroundColor: ThemeWidget.of(context).theme.secondaryColor,
+        title: Text(
           'Animated Ripple Example App',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+            color: ThemeWidget.of(context).theme.mainColor,
+          ),
         ),
       ),
-      // todo (andreyK): add Inherited widget to set this props
-      body: SafeArea(
-        child: Stack(
-          children: [
-            const Center(
-              // todo (andreyK): figure out what is happening with sized and opacities
-              child: AnimatedRipple(
-                size: Size.fromRadius(300),
-                numberOfRipples: 7,
-                duration: Duration(seconds: 1),
-                color: Colors.black,
-                rippleEffect: RippleEffect.speedUpOnTap,
+      body: DecoratedBox(
+        decoration: BoxDecoration(color: ThemeWidget.of(context).theme.secondaryColor),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Center(
+                // todo (andreyK): figure out what is happening with sized and opacities
+                child: AnimatedRipple(
+                  size: const Size.fromRadius(300),
+                  numberOfRipples: 7,
+                  duration: const Duration(seconds: 1),
+                  color: ThemeWidget.of(context).theme.mainColor,
+                  secondaryColor: ThemeWidget.of(context).theme.secondaryColor,
+                  rippleEffect: RippleEffect.speedUpOnTap,
+                ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: CupertinoButton(
-                onPressed: () => Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (context) => const SettingsScreen(),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: CupertinoButton(
+                  onPressed: () async {
+                    await Navigator.of(context).push(
+                      CupertinoPageRoute(builder: (context) => const SettingsScreen(), fullscreenDialog: true),
+                    );
+                    setState(() {});
+                  },
+                  child: Text(
+                    'Settings',
+                    style: TextStyle(fontSize: 24, color: ThemeWidget.of(context).theme.mainColor),
                   ),
                 ),
-                child: const Text(
-                  'Settings',
-                  style: TextStyle(fontSize: 24, color: Colors.black),
-                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

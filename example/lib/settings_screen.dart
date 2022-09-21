@@ -1,27 +1,52 @@
-import 'package:flutter/cupertino.dart';
+import 'package:example/theme_widget.dart';
 import 'package:flutter/material.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool isLightTheme = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Settings',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: ThemeWidget.of(context).theme.mainColor),
         ),
-        leading: const BackButton(
-          color: Colors.black,
+        leading: CloseButton(
+          color: ThemeWidget.of(context).theme.mainColor,
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: ThemeWidget.of(context).theme.secondaryColor,
       ),
-      body: Center(
-        child: Container(
-          height: 100,
-          width: 100,
-          color: Colors.red,
+      body: DecoratedBox(
+        decoration: BoxDecoration(color: ThemeWidget.of(context).theme.secondaryColor),
+        child: Column(
+          children: [
+            Switch(
+              value: isLightTheme,
+              onChanged: (_) {
+                setState(() {
+                  isLightTheme = !isLightTheme;
+                  ThemeWidget.of(context).switchTheme();
+                });
+              },
+            ),
+            Center(
+              child: ClipOval(
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  color: ThemeWidget.of(context).theme.mainColor,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

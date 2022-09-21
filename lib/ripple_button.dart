@@ -1,19 +1,18 @@
 part of 'animated_ripple.dart';
 
 class _RippleButton extends StatefulWidget {
-  static const _opacity = 1.0;
-  static const _fill = true;
-
   const _RippleButton({
     Key? key,
     required this.size,
     required this.color,
+    required this.secondaryColor,
     required this.onPressed,
   }) : super(key: key);
 
   final VoidCallback onPressed;
   final Size size;
   final Color color;
+  final Color secondaryColor;
 
   @override
   State<_RippleButton> createState() => _RippleButtonState();
@@ -28,6 +27,9 @@ class _RippleButtonState extends State<_RippleButton> with SingleTickerProviderS
   static const curve = Curves.bounceIn;
   static const initialSize = 1.0;
   static const sizeIncrease = 1.2;
+
+  static const _opacity = 1.0;
+  static const _fill = true;
 
   @override
   void initState() {
@@ -46,13 +48,12 @@ class _RippleButtonState extends State<_RippleButton> with SingleTickerProviderS
       onTap: () async {
         await _controller.forward();
         await _controller.reverse();
-
         widget.onPressed();
       },
-      splashColor: Colors.white,
-      highlightColor: Colors.white,
-      focusColor: Colors.white,
-      hoverColor: Colors.white,
+      splashColor: widget.secondaryColor,
+      highlightColor: widget.secondaryColor,
+      focusColor: widget.secondaryColor,
+      hoverColor: widget.secondaryColor,
       child: AnimatedSize(
         curve: curve,
         duration: duration,
@@ -60,9 +61,9 @@ class _RippleButtonState extends State<_RippleButton> with SingleTickerProviderS
           size: widget.size * _controller.value,
           painter: _RipplePainter(
             size: widget.size * _controller.value,
-            opacity: _RippleButton._opacity,
+            opacity: _opacity,
             color: widget.color,
-            fill: _RippleButton._fill,
+            fill: _fill,
           ),
         ),
       ),
