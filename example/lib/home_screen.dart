@@ -1,4 +1,6 @@
 import 'package:animated_ripple/animated_ripple.dart';
+import 'package:example/settings_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -34,14 +36,34 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ),
       ),
       // todo (andreyK): add Inherited widget to set this props
-      body: const Center(
-        // todo (andreyK): figure out what is happening with sized and opacities
-        child: AnimatedRipple(
-          size: Size.fromRadius(300),
-          numberOfRipples: 7,
-          duration: Duration(seconds: 1),
-          color: Colors.black,
-          rippleEffect: RippleEffect.speedUpOnTap,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            const Center(
+              // todo (andreyK): figure out what is happening with sized and opacities
+              child: AnimatedRipple(
+                size: Size.fromRadius(300),
+                numberOfRipples: 7,
+                duration: Duration(seconds: 1),
+                color: Colors.black,
+                rippleEffect: RippleEffect.speedUpOnTap,
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: CupertinoButton(
+                onPressed: () => Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => const SettingsScreen(),
+                  ),
+                ),
+                child: const Text(
+                  'Settings',
+                  style: TextStyle(fontSize: 24, color: Colors.black),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
