@@ -3,7 +3,6 @@ library animated_ripple;
 import 'package:flutter/material.dart';
 
 part 'ripple_button.dart';
-
 part 'ripple_painter.dart';
 
 enum RippleEffect { looped, animateOnTap, speedUpOnTap }
@@ -40,8 +39,11 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
+      animationBehavior: AnimationBehavior.preserve,
     );
-    if (widget.rippleEffect == RippleEffect.looped) _controller.repeat();
+    if (widget.rippleEffect == RippleEffect.looped || widget.rippleEffect == RippleEffect.speedUpOnTap) {
+      _controller.repeat();
+    }
   }
 
   @override
@@ -110,6 +112,11 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
                 if (widget.rippleEffect == RippleEffect.animateOnTap) {
                   await _controller.forward();
                   _controller.reset();
+                } else if (widget.rippleEffect == RippleEffect.speedUpOnTap) {
+                  // TODO (andreyK): this is actually works, but need to do it better - with configuration and etc
+                  await _controller.fling(velocity: 1.5);
+                  _controller.reset();
+                  _controller.repeat();
                 }
               },
               color: widget.color,
