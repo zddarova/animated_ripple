@@ -2,9 +2,12 @@ library animated_ripple;
 
 import 'package:flutter/material.dart';
 
+part 'ripple_button.dart';
+
 part 'ripple_painter.dart';
 
-part 'ripple_button.dart';
+enum RippleEffect { looped, animateOnTap, speedUpOnTap }
+
 // todo(andreyK): add button bounce option on tap
 class AnimatedRipple extends StatefulWidget {
   const AnimatedRipple({
@@ -13,9 +16,8 @@ class AnimatedRipple extends StatefulWidget {
     required this.numberOfRipples,
     required this.duration,
     required this.color,
+    required this.rippleEffect,
     this.onPressed,
-    // todo (andreyK): replace with enum
-    required this.loopAnimation,
   }) : super(key: key);
 
   final int numberOfRipples;
@@ -23,7 +25,7 @@ class AnimatedRipple extends StatefulWidget {
   final Duration duration;
   final Color color;
   final VoidCallback? onPressed;
-  final bool loopAnimation;
+  final RippleEffect rippleEffect;
 
   @override
   State<AnimatedRipple> createState() => _AnimatedRippleState();
@@ -39,7 +41,7 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
       vsync: this,
       duration: widget.duration,
     );
-    if (widget.loopAnimation) _controller.repeat();
+    if (widget.rippleEffect == RippleEffect.looped) _controller.repeat();
   }
 
   @override
@@ -103,9 +105,12 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
           children: [
             ...paints,
             _RippleButton(
-              onPressed: () {
-                if (!widget.loopAnimation) _controller.forward().then((_) => _controller.reset());
+              onPressed: () async {
                 widget.onPressed?.call();
+                if (widget.rippleEffect == RippleEffect.animateOnTap) {
+                  await _controller.forward();
+                  _controller.reset();
+                }
               },
               color: widget.color,
               size: widget.size / widget.numberOfRipples.toDouble(),

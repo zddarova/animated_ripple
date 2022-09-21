@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           numberOfRipples: 10,
           duration: Duration(seconds: 2),
           color: Colors.black,
-          loopAnimation: true,
+          rippleEffect: RippleEffect.looped,
         ),
       ),
     );
