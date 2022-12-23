@@ -1,7 +1,7 @@
 name: animated_ripple
 description: A new Flutter project.
 version: 0.0.1
-homepage:
+repository: https://github.com/zddarova/animated_ripple
 
 environment:
   sdk: '>=2.18.1 <3.0.0'
