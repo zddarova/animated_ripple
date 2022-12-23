@@ -2,10 +2,11 @@ library animated_ripple;
 
 import 'package:flutter/material.dart';
 
+part 'ripple_button.dart';
 part 'ripple_painter.dart';
 
-part 'ripple_button.dart';
-// todo(andreyK): add button bounce option on tap
+enum RippleEffect { looped, animateOnTap, speedUpOnTap }
+
 class AnimatedRipple extends StatefulWidget {
   const AnimatedRipple({
     Key? key,
@@ -13,17 +14,18 @@ class AnimatedRipple extends StatefulWidget {
     required this.numberOfRipples,
     required this.duration,
     required this.color,
+    required this.secondaryColor,
+    required this.rippleEffect,
     this.onPressed,
-    // todo (andreyK): replace with enum
-    required this.loopAnimation,
   }) : super(key: key);
 
   final int numberOfRipples;
   final Size size;
   final Duration duration;
   final Color color;
+  final Color secondaryColor;
   final VoidCallback? onPressed;
-  final bool loopAnimation;
+  final RippleEffect rippleEffect;
 
   @override
   State<AnimatedRipple> createState() => _AnimatedRippleState();
@@ -38,8 +40,11 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
+      animationBehavior: AnimationBehavior.preserve,
     );
-    if (widget.loopAnimation) _controller.repeat();
+    if (widget.rippleEffect == RippleEffect.looped || widget.rippleEffect == RippleEffect.speedUpOnTap) {
+      _controller.repeat();
+    }
   }
 
   @override
@@ -103,11 +108,24 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
           children: [
             ...paints,
             _RippleButton(
-              onPressed: () {
-                if (!widget.loopAnimation) _controller.forward().then((_) => _controller.reset());
+              onPressed: () async {
+                print('test 1');
                 widget.onPressed?.call();
+                if (widget.rippleEffect == RippleEffect.animateOnTap) {
+                  await _controller.forward();
+                  _controller.reset();
+                } else if (widget.rippleEffect == RippleEffect.speedUpOnTap) {
+                  // TODO (andreyK): this is actually works, but need to do it better - with configuration and etc
+                  print('test before');
+
+                  await _controller.fling(velocity: 1.5);
+                  print('test after');
+                  _controller.reset();
+                  _controller.repeat();
+                }
               },
               color: widget.color,
+              secondaryColor: widget.secondaryColor,
               size: widget.size / widget.numberOfRipples.toDouble(),
             ),
           ],
