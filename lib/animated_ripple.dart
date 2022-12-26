@@ -109,17 +109,14 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
             ...paints,
             _RippleButton(
               onPressed: () async {
-                print('test 1');
                 widget.onPressed?.call();
                 if (widget.rippleEffect == RippleEffect.animateOnTap) {
                   await _controller.forward();
                   _controller.reset();
                 } else if (widget.rippleEffect == RippleEffect.speedUpOnTap) {
                   // TODO (andreyK): this is actually works, but need to do it better - with configuration and etc
-                  print('test before');
 
                   await _controller.fling(velocity: 1.5);
-                  print('test after');
                   _controller.reset();
                   _controller.repeat();
                 }
