@@ -17,6 +17,7 @@ class AnimatedRipple extends StatefulWidget {
     required this.secondaryColor,
     required this.rippleEffect,
     this.onPressed,
+    this.icon,
   }) : super(key: key);
 
   final int numberOfRipples;
@@ -26,6 +27,7 @@ class AnimatedRipple extends StatefulWidget {
   final Color secondaryColor;
   final VoidCallback? onPressed;
   final RippleEffect rippleEffect;
+  final Widget? icon;
 
   @override
   State<AnimatedRipple> createState() => _AnimatedRippleState();
@@ -108,6 +110,10 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
           children: [
             ...paints,
             _RippleButton(
+              color: widget.color,
+              secondaryColor: widget.secondaryColor,
+              size: widget.size / widget.numberOfRipples.toDouble(),
+              icon: widget.icon,
               onPressed: () async {
                 widget.onPressed?.call();
                 if (widget.rippleEffect == RippleEffect.animateOnTap) {
@@ -121,9 +127,6 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
                   _controller.repeat();
                 }
               },
-              color: widget.color,
-              secondaryColor: widget.secondaryColor,
-              size: widget.size / widget.numberOfRipples.toDouble(),
             ),
           ],
         );
