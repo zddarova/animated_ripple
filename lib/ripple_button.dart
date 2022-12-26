@@ -7,12 +7,14 @@ class _RippleButton extends StatefulWidget {
     required this.color,
     required this.secondaryColor,
     required this.onPressed,
+    this.icon,
   }) : super(key: key);
 
   final VoidCallback onPressed;
   final Size size;
   final Color color;
   final Color secondaryColor;
+  final Widget? icon;
 
   @override
   State<_RippleButton> createState() => _RippleButtonState();
@@ -50,33 +52,39 @@ class _RippleButtonState extends State<_RippleButton> with SingleTickerProviderS
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () async {
-        if (callbackFirst) {
-          widget.onPressed();
-          await _sizeUpAndDown();
-        } else {
-          await _sizeUpAndDown();
-          widget.onPressed();
-        }
-      },
-      splashColor: widget.secondaryColor,
-      highlightColor: widget.secondaryColor,
-      focusColor: widget.secondaryColor,
-      hoverColor: widget.secondaryColor,
-      child: AnimatedSize(
-        curve: curve,
-        duration: duration,
-        child: CustomPaint(
-          size: widget.size * _controller.value,
-          painter: _RipplePainter(
-            size: widget.size * _controller.value,
-            opacity: _opacity,
-            color: widget.color,
-            fill: _fill,
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        InkWell(
+          onTap: () async {
+            if (callbackFirst) {
+              widget.onPressed();
+              await _sizeUpAndDown();
+            } else {
+              await _sizeUpAndDown();
+              widget.onPressed();
+            }
+          },
+          splashColor: widget.secondaryColor,
+          highlightColor: widget.secondaryColor,
+          focusColor: widget.secondaryColor,
+          hoverColor: widget.secondaryColor,
+          child: AnimatedSize(
+            curve: curve,
+            duration: duration,
+            child: CustomPaint(
+              size: widget.size * _controller.value,
+              painter: _RipplePainter(
+                size: widget.size * _controller.value,
+                opacity: _opacity,
+                color: widget.color,
+                fill: _fill,
+              ),
+            ),
           ),
         ),
-      ),
+        if (widget.icon != null) widget.icon!,
+      ],
     );
   }
 }
