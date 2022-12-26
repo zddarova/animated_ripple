@@ -46,6 +46,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               Center(
                 // todo (andreyK): figure out what is happening with sized and opacities
                 child: AnimatedRipple(
+                  icon: Icon(
+                    Icons.water_drop_sharp,
+                    color: ThemeWidget.of(context).theme.secondaryColor,
+                  ),
                   size: const Size.fromRadius(300),
                   numberOfRipples: 7,
                   duration: const Duration(seconds: 1),
