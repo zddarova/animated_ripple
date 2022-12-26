@@ -55,35 +55,32 @@ class _RippleButtonState extends State<_RippleButton> with SingleTickerProviderS
     return Stack(
       alignment: Alignment.center,
       children: [
-        InkWell(
-          onTap: () async {
-            if (callbackFirst) {
-              widget.onPressed();
-              await _sizeUpAndDown();
-            } else {
-              await _sizeUpAndDown();
-              widget.onPressed();
-            }
-          },
-          splashColor: widget.secondaryColor,
-          highlightColor: widget.secondaryColor,
-          focusColor: widget.secondaryColor,
-          hoverColor: widget.secondaryColor,
-          child: AnimatedSize(
-            curve: curve,
-            duration: duration,
-            child: CustomPaint(
+        AnimatedSize(
+          curve: curve,
+          duration: duration,
+          child: CustomPaint(
+            size: widget.size * _controller.value,
+            painter: _RipplePainter(
               size: widget.size * _controller.value,
-              painter: _RipplePainter(
-                size: widget.size * _controller.value,
-                opacity: _opacity,
-                color: widget.color,
-                fill: _fill,
-              ),
+              opacity: _opacity,
+              color: widget.color,
+              fill: _fill,
             ),
           ),
         ),
-        if (widget.icon != null) widget.icon!,
+        if (widget.icon != null)
+          InkWell(
+            child: widget.icon!,
+            onTap: () async {
+              if (callbackFirst) {
+                widget.onPressed();
+                await _sizeUpAndDown();
+              } else {
+                await _sizeUpAndDown();
+                widget.onPressed();
+              }
+            },
+          ),
       ],
     );
   }
