@@ -52,7 +52,7 @@ class _RippleButtonState extends State<_RippleButton> with SingleTickerProviderS
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: () async {
         if (callbackFirst) {
           widget.onPressed();
