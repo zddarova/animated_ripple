@@ -11,7 +11,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -39,19 +40,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         ),
       ),
       body: DecoratedBox(
-        decoration: BoxDecoration(color: ThemeWidget.of(context).theme.secondaryColor),
+        decoration:
+            BoxDecoration(color: ThemeWidget.of(context).theme.secondaryColor),
         child: SafeArea(
           child: Stack(
             children: [
               Center(
                 // todo (andreyK): figure out what is happening with sized and opacities
                 child: AnimatedRipple(
-                  icon: Icon(
-                    Icons.water_drop_sharp,
-                    color: ThemeWidget.of(context).theme.secondaryColor,
-                  ),
                   size: const Size.fromRadius(300),
-                  numberOfRipples: 7,
+                  numberOfRipples: 5,
                   duration: const Duration(seconds: 1),
                   color: ThemeWidget.of(context).theme.mainColor,
                   secondaryColor: ThemeWidget.of(context).theme.secondaryColor,
@@ -63,13 +61,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 child: CupertinoButton(
                   onPressed: () async {
                     await Navigator.of(context).push(
-                      CupertinoPageRoute(builder: (context) => const SettingsScreen(), fullscreenDialog: true),
+                      CupertinoPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                          fullscreenDialog: true),
                     );
                     setState(() {});
                   },
                   child: Text(
                     'Settings',
-                    style: TextStyle(fontSize: 24, color: ThemeWidget.of(context).theme.mainColor),
+                    style: TextStyle(
+                        fontSize: 24,
+                        color: ThemeWidget.of(context).theme.mainColor),
                   ),
                 ),
               ),

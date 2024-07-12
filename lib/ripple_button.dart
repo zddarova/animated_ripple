@@ -20,7 +20,8 @@ class _RippleButton extends StatefulWidget {
   State<_RippleButton> createState() => _RippleButtonState();
 }
 
-class _RippleButtonState extends State<_RippleButton> with SingleTickerProviderStateMixin {
+class _RippleButtonState extends State<_RippleButton>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
   // TODO (andreyK): Make it as much configurable as possible
@@ -70,7 +71,7 @@ class _RippleButtonState extends State<_RippleButton> with SingleTickerProviderS
             duration: duration,
             child: CustomPaint(
               size: widget.size * _controller.value,
-              painter: _RipplePainter(
+              painter: RipplePainter(
                 size: widget.size * _controller.value,
                 opacity: _opacity,
                 color: widget.color,
