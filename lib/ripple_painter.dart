@@ -1,12 +1,12 @@
 part of 'animated_ripple.dart';
 
-class _RipplePainter extends CustomPainter {
+class RipplePainter extends CustomPainter {
   final Size size;
   final Color color;
   final double opacity;
   final bool fill;
 
-  _RipplePainter({
+  RipplePainter({
     required this.size,
     required this.opacity,
     required this.color,

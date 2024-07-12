@@ -2,6 +2,7 @@ library animated_ripple;
 
 import 'package:flutter/material.dart';
 
+part 'circle_painter.dart';
 part 'ripple_button.dart';
 part 'ripple_painter.dart';
 
@@ -18,6 +19,8 @@ class AnimatedRipple extends StatefulWidget {
     required this.rippleEffect,
     this.onPressed,
     this.icon,
+    this.child,
+    this.paint,
   }) : super(key: key);
 
   final int numberOfRipples;
@@ -28,12 +31,15 @@ class AnimatedRipple extends StatefulWidget {
   final VoidCallback? onPressed;
   final RippleEffect rippleEffect;
   final Widget? icon;
+  final Widget? child;
+  final CustomPainter? paint;
 
   @override
   State<AnimatedRipple> createState() => _AnimatedRippleState();
 }
 
-class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProviderStateMixin {
+class _AnimatedRippleState extends State<AnimatedRipple>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -44,7 +50,8 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
       duration: widget.duration,
       animationBehavior: AnimationBehavior.preserve,
     );
-    if (widget.rippleEffect == RippleEffect.looped || widget.rippleEffect == RippleEffect.speedUpOnTap) {
+    if (widget.rippleEffect == RippleEffect.looped ||
+        widget.rippleEffect == RippleEffect.speedUpOnTap) {
       _controller.repeat();
     }
   }
@@ -64,18 +71,23 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
 
         for (var i = 1; i < widget.numberOfRipples + 1; i++) {
           final iCoefficient = i.toDouble() / widget.numberOfRipples.toDouble();
-          final nextCoefficient = (i + 1).toDouble() / widget.numberOfRipples.toDouble();
+          final nextCoefficient =
+              (i + 1).toDouble() / widget.numberOfRipples.toDouble();
 
           final iSize = widget.size * iCoefficient;
           final nextSize = widget.size * nextCoefficient;
 
-          final h = iSize.height + (nextSize.height - iSize.height) * _controller.value;
-          final w = iSize.width + (nextSize.width - iSize.width) * _controller.value;
+          final h = iSize.height +
+              (nextSize.height - iSize.height) * _controller.value;
+          final w =
+              iSize.width + (nextSize.width - iSize.width) * _controller.value;
 
           final result = Size(h, w);
 
           // TODO (andreyK): fix issue with opacity assert
-          var opacity = 1 - nextCoefficient - (nextCoefficient - iCoefficient) * _controller.value;
+          var opacity = 1 -
+              nextCoefficient -
+              (nextCoefficient - iCoefficient) * _controller.value;
           if (opacity < 0) opacity = 0;
           if (opacity > 1) opacity = 1;
 
@@ -96,11 +108,12 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
           paints.add(
             CustomPaint(
               size: result,
-              painter: _RipplePainter(
-                size: result,
-                opacity: opacity,
-                color: widget.color,
-              ),
+              painter: widget.paint ??
+                  CirclePainter(
+                    radius: result.width / 2,
+                    opacity: opacity,
+                    color: widget.color,
+                  ),
             ),
           );
         }
@@ -109,25 +122,28 @@ class _AnimatedRippleState extends State<AnimatedRipple> with SingleTickerProvid
           alignment: Alignment.center,
           children: [
             ...paints,
-            _RippleButton(
-              color: widget.color,
-              secondaryColor: widget.secondaryColor,
-              size: widget.size / widget.numberOfRipples.toDouble(),
-              icon: widget.icon,
-              onPressed: () async {
-                widget.onPressed?.call();
-                if (widget.rippleEffect == RippleEffect.animateOnTap) {
-                  await _controller.forward();
-                  _controller.reset();
-                } else if (widget.rippleEffect == RippleEffect.speedUpOnTap) {
-                  // TODO (andreyK): this is actually works, but need to do it better - with configuration and etc
+            if (widget.child != null)
+              widget.child!
+            else
+              _RippleButton(
+                color: widget.color,
+                secondaryColor: widget.secondaryColor,
+                size: widget.size / widget.numberOfRipples.toDouble(),
+                icon: widget.icon,
+                onPressed: () async {
+                  widget.onPressed?.call();
+                  if (widget.rippleEffect == RippleEffect.animateOnTap) {
+                    await _controller.forward();
+                    _controller.reset();
+                  } else if (widget.rippleEffect == RippleEffect.speedUpOnTap) {
+                    // TODO (andreyK): this is actually works, but need to do it better - with configuration and etc
 
-                  await _controller.fling(velocity: 1.5);
-                  _controller.reset();
-                  _controller.repeat();
-                }
-              },
-            ),
+                    await _controller.fling(velocity: 1.5);
+                    _controller.reset();
+                    _controller.repeat();
+                  }
+                },
+              ),
           ],
         );
       },
